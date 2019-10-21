@@ -1,4 +1,4 @@
-podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFAULT_CLOUD_NAME, inheritFrom: env.DIND_CI_CD_PHP_POD_TEMPLATE_NAME ) {
+podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFAULT_CLOUD_NAME, inheritFrom: env.DIND_CI_CD_BASE_POD_TEMPLATE_NAME ) {
   node(env.DIND_CI_CD_DEFAULT_POD_LABEL) {
     container(env.DIND_CI_CD_DEFAULT_CONTAINER_NAME) {
       try {
