@@ -1,62 +1,61 @@
-// podTemplate 已由系统配置好了，以下为固定变量值，不要修改
-def k8sCluoudName = 'ai_k8s_cloud'
-def podLabel = 'dind-ci-cd'
-def containerName = 'dind-ci-cd'
+podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFAULT_CLOUD_NAME, inheritFrom: env.DIND_CI_CD_PHP_POD_TEMPLATE_NAME ) {
+  node(env.DIND_CI_CD_DEFAULT_POD_LABEL) {
+    container(env.DIND_CI_CD_DEFAULT_CONTAINER_NAME) {
+      try {
+          checkout(scm).each { k,v -> env.setProperty(k, v) }
 
-podTemplate( label: podLabel, cloud: k8sCluoudName) {
-  node(podLabel) {
-    
-    // 从代码仓库，拉取当前分支的最新代码
-    // 固定步骤，不要修改
-    def scmVars = checkout scm
-
-    withEnv([
-      "PROJECT_NAME=jenkins-for-the-first-time",
-      "GIT_BRANCH=${scmVars.GIT_BRANCH}",
-      "GIT_COMMIT=${scmVars.GIT_COMMIT}",
-    ]) {
-
-        // 在默认的容器中，执行流水线的各个阶段，完成 CI/CD
-        container(containerName) {
+          // ====== 项目 ci/cd stage 从此处开始编写 ======
           stage('Build') {
               sh '''
-                echo "在这里编写构建逻辑"
-                echo "在 sh 包裹的地方，可以写 shell 脚本"
-                echo """
-在这里可以读取环境变量：${PROJECT_NAME}
-来协助完成各种构建需求
-                """
+                echo "在这里编写：构建任务"
               '''
           }
-          stage('Test') {
-              sh '''
-                echo "在这里编写测试逻辑" 
-              '''
-          }
+
           stage('Deploy-dev') {
-              // 如果条件不满足，则跳过当前 stage，执行下一个 stage
-              if( env.GIT_BRANCH != 'dev' ) {
+              def stageBranchs = ['dev'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
                 currentBuild.result = 'SUCCESS'
                 return
               }
 
               sh '''
-                echo "在这里编写部署到 dev 环境的逻辑"
+                echo "在这里编写：部署任务-开发环境"
               '''
           }
+
+          stage('Deploy-stage') {
+              def stageBranchs = ['stage'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
+                currentBuild.result = 'SUCCESS'
+                return
+              }
+
+              sh '''
+                echo "在这里编写：部署任务-预发环境"
+              '''
+          }
+
           stage('Deploy-prod') {
-              // 如果条件不满足，则跳过当前 stage，执行下一个 stage
-              if( env.GIT_BRANCH != 'master' ) {
+              def stageBranchs = ['master'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
                 currentBuild.result = 'SUCCESS'
                 return
               }
 
               sh '''
-                echo "在这里编写部署到 prod 环境的逻辑"
+                echo "在这里编写：部署任务-生成环境"
               '''
           }
-        }
+          // ====== 项目 ci/cd stage 编写到此处结束 ======
 
+      } catch (err) {
+        currentBuild.result = 'FAILURE'
+        env.setProperty('BUILD_ERROR_MESSAGE', err.getMessage())
+        
+        sh '''
+          echo "流水线执行失败，错误信息：${BUILD_ERROR_MESSAGE}"
+        '''
+      }
     }
   }
 }
