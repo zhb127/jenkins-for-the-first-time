@@ -11,6 +11,18 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
               '''
           }
 
+          stage('Test') {
+              def stageBranchs = ['dev', 'stage', 'master'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
+                currentBuild.result = 'SUCCESS'
+                return
+              }
+
+              sh '''
+                echo "在这里编写：测试任务"
+              '''
+          }
+
           stage('Deploy-dev') {
               def stageBranchs = ['dev'];
               if (false == stageBranchs.contains(env.GIT_BRANCH)) {
