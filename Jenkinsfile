@@ -1,3 +1,9 @@
+// ------ 以下环境变量按照项目需求做修改 ------
+// - 钉钉通知相关配置项
+env.DINGTALK_ACCESS_TOKEN=""; // 钉钉群机器人 access-token
+env.DINGTALK_MOBILES="";      // at 指定人员，值格式为：手机号,手机号,手机号；at 所有人，值为：all
+// ------ 以上环境变量按照项目需求做修改 ------
+
 podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFAULT_CLOUD_NAME, inheritFrom: env.DIND_CI_CD_BASE_POD_TEMPLATE_NAME ) {
   node(env.DIND_CI_CD_DEFAULT_POD_LABEL) {
     container(env.DIND_CI_CD_DEFAULT_CONTAINER_NAME) {
@@ -8,6 +14,8 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
           stage('Build') {
               sh '''
                 echo "在这里编写：构建任务"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
 
@@ -20,6 +28,8 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
 
               sh '''
                 echo "在这里编写：测试任务"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
 
@@ -32,6 +42,8 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
 
               sh '''
                 echo "在这里编写：部署任务-开发环境"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
 
@@ -44,6 +56,8 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
 
               sh '''
                 echo "在这里编写：部署任务-预发环境"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
 
@@ -56,6 +70,8 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
 
               sh '''
                 echo "在这里编写：部署任务-生成环境"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
           // ====== 项目 ci/cd stage 编写到此处结束 ======
@@ -65,7 +81,7 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
         env.setProperty('BUILD_ERROR_MESSAGE', err.getMessage())
         
         sh '''
-          echo "流水线执行失败，错误信息：${BUILD_ERROR_MESSAGE}"
+          dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t pipeline-failure)"
         '''
       }
     }
