@@ -11,28 +11,37 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
           checkout(scm).each { k,v -> env.setProperty(k, v) }
 
           // ====== 项目 ci/cd stage 从此处开始编写 ======
-          stage('Build') {
-              sh '''
-                echo "在这里编写：构建任务"
-
-                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
-              '''
-          }
-
+          // 测试
           stage('Test') {
-              def stageBranchs = ['dev', 'stage', 'master'];
+              def stageBranchs = ['dev'];
               if (false == stageBranchs.contains(env.GIT_BRANCH)) {
                 currentBuild.result = 'SUCCESS'
                 return
               }
 
               sh '''
-                echo "在这里编写：测试任务"
+                echo "在这里编写：测试任务脚本（注意环境）"
 
                 dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
 
+          // 构建：开发环境
+          stage('Build-dev') {
+              def stageBranchs = ['dev'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
+                currentBuild.result = 'SUCCESS'
+                return
+              }
+
+              sh '''
+                echo "在这里编写：构建任务脚本（注意环境）"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
+              '''
+          }
+
+          // 部署：开发环境
           stage('Deploy-dev') {
               def stageBranchs = ['dev'];
               if (false == stageBranchs.contains(env.GIT_BRANCH)) {
@@ -41,26 +50,58 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
               }
 
               sh '''
-                echo "在这里编写：部署任务-开发环境"
+                echo "在这里编写：部署任务脚本（注意环境）"
 
                 dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
 
-          stage('Deploy-stage') {
-              def stageBranchs = ['stage'];
+          // 构建：预发环境
+          stage('Build-release') {
+              def stageBranchs = ['release'];
               if (false == stageBranchs.contains(env.GIT_BRANCH)) {
                 currentBuild.result = 'SUCCESS'
                 return
               }
 
               sh '''
-                echo "在这里编写：部署任务-预发环境"
+                echo "在这里编写：部署任务脚本（注意环境）"
 
                 dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
           }
 
+          // 部署：预发环境
+          stage('Deploy-release') {
+              def stageBranchs = ['release'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
+                currentBuild.result = 'SUCCESS'
+                return
+              }
+
+              sh '''
+                echo "在这里编写：部署任务脚本（注意环境）"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
+              '''
+          }
+
+          // 构建：生产环境
+          stage('Build-prod') {
+              def stageBranchs = ['master'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
+                currentBuild.result = 'SUCCESS'
+                return
+              }
+
+              sh '''
+                echo "在这里编写：部署任务脚本（注意环境）"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
+              '''
+          }
+
+          // 部署：生产环境
           stage('Deploy-prod') {
               def stageBranchs = ['master'];
               if (false == stageBranchs.contains(env.GIT_BRANCH)) {
@@ -69,7 +110,7 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
               }
 
               sh '''
-                echo "在这里编写：部署任务-生成环境"
+                echo "在这里编写：部署任务脚本（注意环境）"
 
                 dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
