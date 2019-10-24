@@ -1,6 +1,6 @@
 // ------ 以下环境变量按照项目需求做修改 ------
 // - 钉钉通知相关配置项
-env.DINGTALK_ACCESS_TOKEN=""; // 钉钉群机器人 access-token
+env.DINGTALK_ACCESS_TOKEN="9dd46fa75abf1a56cd2110c0000d41044f40abc00bb290f9a1a6e4c239fbcf79"; // 钉钉群机器人 access-token
 env.DINGTALK_MOBILES="";      // at 指定人员，值格式为：手机号,手机号,手机号；at 所有人，值为：all
 // ------ 以上环境变量按照项目需求做修改 ------
 
