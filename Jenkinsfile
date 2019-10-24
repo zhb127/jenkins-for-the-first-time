@@ -19,15 +19,15 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
               '''
           }
 
-          stage('Test') {
-              def stageBranchs = ['dev', 'stage', 'master'];
+          stage('Test-dev') {
+              def stageBranchs = ['dev'];
               if (false == stageBranchs.contains(env.GIT_BRANCH)) {
                 currentBuild.result = 'SUCCESS'
                 return
               }
 
               sh '''
-                echo "在这里编写：测试任务"
+                echo "在这里编写：测试任务-开发环境"
 
                 dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
               '''
@@ -47,8 +47,22 @@ podTemplate( label: env.DIND_CI_CD_DEFAULT_POD_LABEL, cloud: env.DIND_CI_CD_DEFA
               '''
           }
 
-          stage('Deploy-stage') {
-              def stageBranchs = ['stage'];
+          stage('Test-release') {
+              def stageBranchs = ['release'];
+              if (false == stageBranchs.contains(env.GIT_BRANCH)) {
+                currentBuild.result = 'SUCCESS'
+                return
+              }
+
+              sh '''
+                echo "在这里编写：测试任务-预发环境"
+
+                dind-notify-dingtalk -a "${DINGTALK_ACCESS_TOKEN}" -m "${DINGTALK_MOBILES}" -t "$(dind-notify-text -t verify-jenkins-access)"
+              '''
+          }
+
+          stage('Deploy-release') {
+              def stageBranchs = ['release'];
               if (false == stageBranchs.contains(env.GIT_BRANCH)) {
                 currentBuild.result = 'SUCCESS'
                 return
