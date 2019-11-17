@@ -1,7 +1,7 @@
 // ------ 以下环境变量按照项目需求做修改 ------
 env.DIND_CI_CD_POD_TEMPLATE_NAME=env.DIND_CI_CD_BASE_POD_TEMPLATE_NAME
 // - 钉钉通知相关配置项
-env.DINGTALK_ACCESS_TOKEN="9dd46fa75abf1a56cd2110c0000d41044f40abc00bb290f9a1a6e4c239fbcf79"; // 钉钉群机器人 access-token
+env.DINGTALK_ACCESS_TOKEN="c44ba5e19146b35c79ed092cbb3562d8038ab6733fd1094c9ce730bfd82a9874"; // 钉钉群机器人 access-token
 env.DINGTALK_MOBILES="";      // at 指定人员，值格式为：手机号,手机号,手机号；at 所有人，值为：all
 // ------ 以上环境变量按照项目需求做修改 ------
 
