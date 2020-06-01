@@ -7,7 +7,8 @@ pipelineDefault.run({
   // 测试
   stage('Test') {
       sh '''
-      sleep 60s
+      sleep 10s
+      echo "10s 后结束"
       '''
   }
 });
