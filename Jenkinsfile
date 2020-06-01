@@ -7,7 +7,7 @@ pipelineDefault.run({
   // 测试
   stage('Test') {
       sh '''
-      sleep 600s
+      sleep 60s
       '''
   }
 });
